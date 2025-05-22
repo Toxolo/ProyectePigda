@@ -26,6 +26,74 @@ public class Equipo {
     }
 
     // Getters y Setters
-    // ... (implementación completa omitida por claridad, incluir todos los campos)
+            public int getIdEquipo() {
+            return idEquipo;
+            }
+            public void setIdEquipo(int idEquipo) {
+            this.idEquipo = idEquipo;
+            }
+
+            public String getNombreEquipo() {
+            return nombreEquipo;
+            }
+            public void setNombreEquipo(String nombreEquipo) {
+            this.nombreEquipo = nombreEquipo;
+            }
+
+            public String getTipo() {
+            return tipo;
+            }
+            public void setTipo(String tipo) {
+            this.tipo = tipo;
+            }
+
+            public String getMarca() {
+            return marca;
+            }
+            public void setMarca(String marca) {
+            this.marca = marca;
+            }
+
+            public String getModelo() {
+            return modelo;
+            }
+            public void setModelo(String modelo) {
+            this.modelo = modelo;
+            }
+
+            public String getNumeroSerie() {
+            return numeroSerie;
+            }
+            public void setNumeroSerie(String numeroSerie) {
+            this.numeroSerie = numeroSerie;
+            }
+
+            public String getUbicacion() {
+            return ubicacion;
+            }
+            public void setUbicacion(String ubicacion) {
+            this.ubicacion = ubicacion;
+            }
+
+            public String getResponsable() {
+            return responsable;
+            }
+            public void setResponsable(String responsable) {
+            this.responsable = responsable;
+            }
+
+            public java.sql.Date getFechaAdquisicion() {
+            return fechaAdquisicion;
+            }
+            public void setFechaAdquisicion(java.sql.Date fechaAdquisicion) {
+            this.fechaAdquisicion = fechaAdquisicion;
+            }
+
+            public String getEstado() {
+            return estado;
+            }
+            public void setEstado(String estado) {
+            this.estado = estado;
+            }
 }
 

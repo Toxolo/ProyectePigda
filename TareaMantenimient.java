@@ -24,5 +24,60 @@ public class TareaMantenimiento {
     }
 
     // Getters y Setters
-    // ... (implementación completa omitida por claridad, incluir todos los campos)
-}
+    public int getIdTarea() {
+  return idTarea;
+ }
+ public void setIdTarea(int idTarea) {
+  this.idTarea = idTarea;
+ }
+ public int getIdEquipo() {
+  return idEquipo;
+ }
+ public void setIdEquipo(int idEquipo) {
+  this.idEquipo = idEquipo;
+ }
+ public String getDescripcion() {
+  return descripcion;
+ }
+ public void setDescripcion(String descripcion) {
+  this.descripcion = descripcion;
+ }
+ public Date getFecha() {
+  return fecha;
+ }
+ public void setFecha(Date fecha) {
+  this.fecha = fecha;
+ }
+ public String getTecnico() {
+  return tecnico;
+ }
+ public void setTecnico(String tecnico) {
+  this.tecnico = tecnico;
+ }
+ public String getTipoMantenimiento() {
+  return tipoMantenimiento;
+ }
+ public void setTipoMantenimiento(String tipoMantenimiento) {
+  this.tipoMantenimiento = tipoMantenimiento;
+ }
+ public String getResultado() {
+  return resultado;
+ }
+ public void setResultado(String resultado) {
+  this.resultado = resultado;
+ }
+ public String getObservaciones() {
+  return observaciones;
+ }
+ public void setObservaciones(String observaciones) {
+  this.observaciones = observaciones;
+ }
+ public double getCoste() {
+  return coste;
+ }
+ public void setCoste(double coste) {
+  this.coste = coste;
+ }
+
+
+} //Fin de la clase TareaMantenimiento
