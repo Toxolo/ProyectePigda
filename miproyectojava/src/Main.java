@@ -37,6 +37,16 @@ public class Main {
                 case 6:
                     eliminarTareaMantenimiento();
                     break;
+                case 7:
+                    mostrarTodasLasTareas();
+                    break;
+                case 8:
+                    modificarEquipo();
+                    break;
+                case 9:
+                    modificarTarea();
+                    break;
+
                 case 0:
                     System.out.println("Saliendo del sistema...");
                     sc.close();
@@ -56,28 +66,43 @@ public class Main {
         System.out.println("4. Ver tareas de mantenimiento de un equipo");
         System.out.println("5. Eliminar equipo");
         System.out.println("6. Eliminar tarea de mantenimiento");
+        System.out.println("7. Ver todas las tareas de mantenimiento");
+        System.out.println("8. Modificar equipo");
+    System.out.println("9. Modificar tarea de mantenimiento");
+
+
         System.out.println("0. Salir");
     }
 
-    private static void registrarEquipo() {
-        try {
-            String nombre = leerTextoObligatorio("Nombre equipo: ");
-            String tipo = leerTextoObligatorio("Tipo: ");
-            String marca = leerTextoObligatorio("Marca: ");
-            String modelo = leerTextoObligatorio("Modelo: ");
-            String serie = leerTextoObligatorio("Número de serie: ");
-            String ubicacion = leerTextoObligatorio("Ubicación: ");
-            String responsable = leerTextoObligatorio("Responsable: ");
-            Date fecha = leerFechaValida("Fecha adquisición (YYYY-MM-DD): ");
-            String estado = leerTextoObligatorio("Estado: ");
-
-            Equipo nuevoEquipo = new Equipo(0, nombre, tipo, marca, modelo, serie, ubicacion, responsable, fecha, estado);
-            equipoDAO.insertarEquipo(nuevoEquipo);
-            System.out.println("Equipo registrado correctamente.");
-        } catch (Exception e) {
-            System.out.println("Error al registrar equipo: " + e.getMessage());
+   private static void registrarEquipo() {
+    try {
+        String nombre;
+        while (true) {
+            nombre = leerTextoObligatorio("Nombre equipo: ");
+            if (equipoDAO.existeNombreEquipo(nombre)) {
+                System.out.println("Ya existe un equipo con ese nombre. Introduce uno diferente.");
+            } else {
+                break;
+            }
         }
+
+        String tipo = leerTextoObligatorio("Tipo: ");
+        String marca = leerTextoObligatorio("Marca: ");
+        String modelo = leerTextoObligatorio("Modelo: ");
+        String serie = leerTextoObligatorio("Número de serie: ");
+        String ubicacion = leerTextoObligatorio("Ubicación: ");
+        String responsable = leerTextoObligatorio("Responsable: ");
+        Date fecha = leerFechaValida("Fecha adquisición (YYYY-MM-DD): ");
+        String estado = leerTextoObligatorio("Estado: ");
+
+        Equipo nuevoEquipo = new Equipo(0, nombre, tipo, marca, modelo, serie, ubicacion, responsable, fecha, estado);
+        equipoDAO.insertarEquipo(nuevoEquipo);
+        System.out.println("Equipo registrado correctamente.");
+    } catch (Exception e) {
+        System.out.println("Error al registrar equipo: " + e.getMessage());
     }
+}
+
 
     private static void mostrarEquipos() {
         try {
@@ -92,25 +117,47 @@ public class Main {
     }
 
     private static void registrarTareaMantenimiento() {
-        try {
-            int idEq = leerEntero("ID del equipo: ");
-            sc.nextLine();
-            String desc = leerTextoObligatorio("Descripción: ");
-            Date fechaTarea = leerFechaValida("Fecha (YYYY-MM-DD): ");
-            String tecnico = leerTextoObligatorio("Técnico: ");
-            String tipoMant = leerTextoObligatorio("Tipo mantenimiento: ");
-            String resultado = leerTextoObligatorio("Resultado: ");
-            String obs = leerTextoObligatorio("Observaciones: ");
-            double coste = leerDecimal("Coste: ");
-            sc.nextLine();
+    try {
+        int idEq;
+        Equipo equipo;
 
-            TareaMantenimiento tarea = new TareaMantenimiento(0, idEq, desc, fechaTarea, tecnico, tipoMant, resultado, obs, coste);
-            tareaDAO.insertarTarea(tarea);
-            System.out.println("Tarea registrada correctamente.");
-        } catch (Exception e) {
-            System.out.println("Error al registrar tarea: " + e.getMessage());
+        while (true) {
+            idEq = leerEntero("ID del equipo: ");
+            sc.nextLine();
+            equipo = equipoDAO.obtenerEquipoPorId(idEq);
+            if (equipo == null) {
+                System.out.println("El ID ingresado no corresponde a ningún equipo existente.");
+            } else {
+                System.out.println("Equipo encontrado:");
+                System.out.println("Nombre: " + equipo.getNombreEquipo());
+                System.out.println("Ubicación: " + equipo.getUbicacion());
+                System.out.println("Responsable: " + equipo.getResponsable());
+                System.out.println("Estado: " + equipo.getEstado());
+                if (!confirmarAccion("¿Deseas continuar registrando la tarea para este equipo? (s/n): ")) {
+                    System.out.println("Operación cancelada.");
+                    return;
+                }
+                break;
+            }
         }
+
+        String desc = leerTextoObligatorio("Descripción: ");
+        Date fechaTarea = leerFechaValida("Fecha (YYYY-MM-DD): ");
+        String tecnico = leerTextoObligatorio("Técnico: ");
+        String tipoMant = leerTextoObligatorio("Tipo mantenimiento: ");
+        String resultado = leerTextoObligatorio("Resultado: ");
+        String obs = leerTextoObligatorio("Observaciones: ");
+        double coste = leerDecimal("Coste: ");
+        sc.nextLine();
+
+        TareaMantenimiento tarea = new TareaMantenimiento(0, idEq, desc, fechaTarea, tecnico, tipoMant, resultado, obs, coste);
+        tareaDAO.insertarTarea(tarea);
+        System.out.println("Tarea registrada correctamente.");
+    } catch (Exception e) {
+        System.out.println("Error al registrar tarea: " + e.getMessage());
     }
+}
+
 
     private static void mostrarTareasDeEquipo() {
         try {
@@ -279,4 +326,177 @@ public class Main {
         String respuesta = sc.nextLine().trim().toLowerCase();
         return respuesta.equals("s") || respuesta.equals("si");
     }
+    private static void mostrarTodasLasTareas() {
+    try {
+        List<TareaMantenimiento> tareas = tareaDAO.obtenerTodasLasTareas();
+        if (tareas.isEmpty()) {
+            System.out.println("No hay tareas registradas.");
+            return;
+        }
+
+        System.out.println("\n--- TODAS LAS TAREAS DE MANTENIMIENTO ---");
+        for (TareaMantenimiento t : tareas) {
+            System.out.println("ID: " + t.getIdTarea() + 
+                               " | Equipo ID: " + t.getIdEquipo() + 
+                               " | Fecha: " + t.getFecha() + 
+                               " | Técnico: " + t.getTecnico() + 
+                               " | Descripción: " + t.getDescripcion());
+        }
+    } catch (Exception e) {
+        System.out.println("Error al mostrar tareas: " + e.getMessage());
+    }
+}
+
+public static void modificarEquipo() {
+    try {
+        System.out.print("Buscar equipo por 'id' o 'nombre': ");
+        String metodo = sc.nextLine().trim().toLowerCase();
+        Equipo equipo = null;
+
+        if (metodo.equals("id")) {
+            int id = leerEntero("ID del equipo: ");
+            sc.nextLine();
+            equipo = equipoDAO.obtenerEquipoPorId(id);
+        } else if (metodo.equals("nombre")) {
+            String filtro = leerTextoObligatorio("Parte del nombre del equipo: ");
+            List<Equipo> resultados = equipoDAO.buscarEquiposPorNombre(filtro);
+            if (resultados.isEmpty()) {
+                System.out.println("No se encontraron equipos.");
+                return;
+            }
+
+            System.out.println("\nResultados encontrados:");
+            for (Equipo eq : resultados) {
+                System.out.println("ID: " + eq.getIdEquipo() + " | Nombre: " + eq.getNombreEquipo() + " | Ubicación: " + eq.getUbicacion());
+            }
+
+            int idSel = leerEntero("ID del equipo que deseas modificar: ");
+            sc.nextLine();
+            equipo = equipoDAO.obtenerEquipoPorId(idSel);
+        } else {
+            System.out.println("Método de búsqueda inválido.");
+            return;
+        }
+
+        if (equipo == null) {
+            System.out.println("Equipo no encontrado.");
+            return;
+        }
+
+        System.out.println("Campos modificables: nombre, tipo, marca, modelo, serie, ubicacion, responsable, fecha, estado");
+        String campo = leerTextoObligatorio("¿Qué campo quieres modificar?: ").toLowerCase();
+
+        switch (campo) {
+            case "nombre":
+                String nuevoNombre;
+                while (true) {
+                    nuevoNombre = leerTextoObligatorio("Nuevo nombre: ");
+                    if (!nuevoNombre.equalsIgnoreCase(equipo.getNombreEquipo())
+                        && equipoDAO.existeNombreEquipo(nuevoNombre)) {
+                        System.out.println("Ya existe un equipo con ese nombre.");
+                    } else {
+                        break;
+                    }
+                }
+                equipo.setNombreEquipo(nuevoNombre);
+                break;
+            case "tipo":
+                equipo.setTipo(leerTextoObligatorio("Nuevo tipo: "));
+                break;
+            case "marca":
+                equipo.setMarca(leerTextoObligatorio("Nueva marca: "));
+                break;
+            case "modelo":
+                equipo.setModelo(leerTextoObligatorio("Nuevo modelo: "));
+                break;
+            case "serie":
+                equipo.setNumeroSerie(leerTextoObligatorio("Nuevo número de serie: "));
+                break;
+            case "ubicacion":
+                equipo.setUbicacion(leerTextoObligatorio("Nueva ubicación: "));
+                break;
+            case "responsable":
+                equipo.setResponsable(leerTextoObligatorio("Nuevo responsable: "));
+                break;
+            case "fecha":
+                equipo.setFechaAdquisicion(leerFechaValida("Nueva fecha (YYYY-MM-DD): "));
+                break;
+            case "estado":
+                equipo.setEstado(leerTextoObligatorio("Nuevo estado: "));
+                break;
+            default:
+                System.out.println("Campo no válido.");
+                return;
+        }
+
+        equipoDAO.actualizarEquipo(equipo);
+        System.out.println("Equipo actualizado correctamente.");
+
+    } catch (Exception e) {
+        System.out.println("Error al modificar equipo: " + e.getMessage());
+    }
+}
+
+
+
+public static void modificarTarea() {
+    try {
+        int id = leerEntero("ID de la tarea a modificar: ");
+        sc.nextLine();
+        TareaMantenimiento tarea = tareaDAO.obtenerTareaPorId(id);
+        if (tarea == null) {
+            System.out.println("No se encontró la tarea.");
+            return;
+        }
+
+        System.out.println("Campos modificables: equipo, descripcion, fecha, tecnico, tipo, resultado, observaciones, coste");
+        String campo = leerTextoObligatorio("¿Qué campo quieres modificar?: ").toLowerCase();
+
+        switch (campo) {
+            case "equipo":
+                int nuevoId = leerEntero("Nuevo ID de equipo: ");
+                sc.nextLine();
+                if (equipoDAO.obtenerEquipoPorId(nuevoId) == null) {
+                    System.out.println("ID no válido.");
+                    return;
+                }
+                tarea.setIdEquipo(nuevoId);
+                break;
+            case "descripcion":
+                tarea.setDescripcion(leerTextoObligatorio("Nueva descripción: "));
+                break;
+            case "fecha":
+                tarea.setFecha(leerFechaValida("Nueva fecha (YYYY-MM-DD): "));
+                break;
+            case "tecnico":
+                tarea.setTecnico(leerTextoObligatorio("Nuevo técnico: "));
+                break;
+            case "tipo":
+                tarea.setTipoMantenimiento(leerTextoObligatorio("Nuevo tipo de mantenimiento: "));
+                break;
+            case "resultado":
+                tarea.setResultado(leerTextoObligatorio("Nuevo resultado: "));
+                break;
+            case "observaciones":
+                tarea.setObservaciones(leerTextoObligatorio("Nuevas observaciones: "));
+                break;
+            case "coste":
+                tarea.setCoste(leerDecimal("Nuevo coste: "));
+                sc.nextLine();
+                break;
+            default:
+                System.out.println("Campo no válido.");
+                return;
+        }
+
+        tareaDAO.actualizarTarea(tarea);
+        System.out.println("Tarea actualizada correctamente.");
+
+    } catch (Exception e) {
+        System.out.println("Error al modificar tarea: " + e.getMessage());
+    }
+}
+
+
+
 }
